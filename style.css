@@ -47,3 +47,18 @@ ul li a{
     font-weight: 500;
     transition: 0.6s ease;
 }
+
+ul li a:hover{
+    background: #000000;
+    color: #fff;
+}
+
+ul li a:hover{
+    background: #000000;
+    color: #fff;
+}
+
+ul li.active a{
+    background: #000000;
+    color: #fff;
+}
