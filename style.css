@@ -29,3 +29,21 @@ header{
     font-weight: bold;
     font-size: 2rem;
 }
+
+ul{
+    list-style: none;
+    float: right;
+    display: flex;
+    margin-top: 20px;
+}
+
+ul li a{
+    text-decoration: none;
+    color: #000000;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    border: 1px solid #000000;
+    margin: 10px;
+    font-weight: 500;
+    transition: 0.6s ease;
+}
