@@ -6,8 +6,30 @@
 }
 
 header{
+<<<<<<< theo
     background-image: url(./image/image1.png);
+=======
+    background-image: url(./image/rendu-3d-du-scenario-routier_23-2151293966.png);
+>>>>>>> main
     height: 100vh;
     background-size: cover;
     background-position: center;
+}
+
+.titre a{
+    color: #000000;
+    padding: 0px 20px;
+    border: 1px solid #000000;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 900;
+}
+
+.titre span{
+    color: rgb(238, 56, 11);
+    font-weight: bold;
+    font-size: 2rem;
 }
