@@ -8,4 +8,6 @@
 header{
     background-image: url(./image/images.png);
     height: 100vh;
+    background-size: cover;
+    background-position: center;
 }
