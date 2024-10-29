@@ -57,3 +57,16 @@ ul li.active a{
     background: #000000;
     color: #fff;
 }
+
+.titre2 a{
+    color: #000000;
+    padding: 0px 20px;
+    border: 1px solid #000000;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 900;
+    text-align: center;
+}
