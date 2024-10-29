@@ -48,16 +48,6 @@ ul li a{
     transition: 0.6s ease;
 }
 
-ul li a:hover{
-    background: #000000;
-    color: #fff;
-}
-
-ul li.active a{
-    background: #000000;
-    color: #fff;
-}
-
 .titre2 a{
     color: #000000;
     padding: 0px 20px;
