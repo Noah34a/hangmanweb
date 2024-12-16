@@ -57,3 +57,25 @@ ul li.active a{
     background: #000000;
     color: #fff;
 }
+.outon{
+    text-decoration: none;
+    color: #000000;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    border: 1px solid #000000;
+    margin: 10px;
+    font-weight: 500;
+    transition: 0.6s ease;
+    list-style: none;
+    float: right;
+    display: flex;
+    margin-top: 20px;
+}
+.outon a:hover{
+    background: #000000;
+    color: #fff;
+}
+.heade{
+    background-image: url(image/niveaux.png);
+    height: 200vh;
+}

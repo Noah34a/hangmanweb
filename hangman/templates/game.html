@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu du Pendu - Devinez le mot !</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1 class="title">Jeu du Pendu</h1>
+
+    <h2>Pendu</h2>
+    <p class="masked-word">Mot à deviner : {{.MaskedWord}}</p>
+    <p class="attempts-left">Tentatives restantes : {{.AttemptsLeft}}</p>
+
+    <div class="image-container">
+        <!-- Affiche l'image du pendu selon le nombre de tentatives restantes -->
+        <img src="/static/image/pendu{{.AttemptsLeft}}.png" alt="Pendu étape {{.AttemptsLeft}}" class="pendu-image">
+    </div>
+
+    <!-- Formulaire pour entrer une lettre -->
+    <form action="/game?category={{.Category}}" method="post" class="guess-form">
+        <input type="text" name="letter" maxlength="1" required class="guess-input" placeholder="Devinez une lettre">
+        <button type="submit" class="btn">Deviner</button>
+    </form>
+
+    {{if .Message}}
+        <p class="message"><strong>{{.Message}}</strong></p>
+        <a href="/" class="btn">Retour au menu principal</a>
+    {{end}}
+</div>
+
+</body>
+</html>
