@@ -1,118 +1,99 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strings"
 )
 
-// Structure des données pour le jeu
-type GameData struct {
-	WordToGuess    string   // Mot à deviner
-	Guesses        []rune   // Lettres devinées
-	Attempts       int      // Tentatives restantes
-	ImagePendu     string   // Chemin vers l'image actuelle
-	GameOver       bool     // État de fin de jeu
-	Message        string   // Message affiché (victoire, défaite)
-	WordRevealed   string   // Mot complet pour défaite
-}
-
 var templates *template.Template
 var words = map[string][]string{
-	"facile":    {"banc","bureau","cabinet","carreau","chaise","classe","maison","coin","couloir","dossier","video","ecole","ecriture","entree","escalier","interieur"},
-	"difficile": {"obsolescence","endogene","procrastination","exsangue","concomitance","peregrination","vicissitude","sagacite","ineffable","anachorete","cacophonie","hermeneutique"},
-	"pays":      {"bresil","colombie","equateur","guyane","jordanie","lituanie","malawi","nepal","portugal","pakistan","somalie","croatie","france"},
-	"marque":    {"rolex","balanciaga","prada","gucci","celio","jules","asics","chanel","casio","dior","armani","decathlon","azzaro"},
+	"facile":    {"banane", "pomme", "chaise", "porte"},
+	"difficile": {"procrastination", "anachronisme", "endogene", "cacophonie"},
+	"pays":      {"bresil", "france", "japon", "canada"},
+	"marque": {"azzaro","zara","rolex","celine","lanvin","omega",},
 }
 
-var game GameData
+type GameData struct {
+	Category     string
+	Word         string
+	MaskedWord   string
+	AttemptsLeft int
+	Message      string
+	Guesses      string
+	Image        string
+}
 
+var gameState = GameData{}
 func main() {
-	// Charger les templates HTML
 	templates = template.Must(template.ParseGlob("templates/*.html"))
-
-	// Servir les fichiers statiques (images et CSS)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	// Définir les routes
-	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/start", startHandler)
+	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/game", gameHandler)
-	http.HandleFunc("/guess", guessHandler)
 
-	// Lancer le serveur
-	fmt.Println("Serveur démarré sur http://localhost:3030")
-	http.ListenAndServe(":3030", nil)
+	log.Println("Serveur démarré sur http://localhost:3030")
+	log.Fatal(http.ListenAndServe(":3030", nil))
 }
-
-// Handler pour la page d'accueil
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		category := r.FormValue("category")
+		if category == "" {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+		gameState = GameData{
+			Category:     category,
+			Word:         randomWord(category),
+			MaskedWord:   maskWord(randomWord(category)),
+			AttemptsLeft: 9,
+			Guesses:      "",
+			Message:      "",
+			Image:        "/static/image/pendu9.png",
+		}
+		http.Redirect(w, r, "/game", http.StatusSeeOther)
+		return
+	}
 	templates.ExecuteTemplate(w, "index.html", nil)
 }
 
-// Handler pour démarrer une partie
-func startHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	level := r.FormValue("level")
-	wordsList := words[level]
-
-	// Initialisation du jeu
-	game.WordToGuess = strings.ToUpper(wordsList[0])
-	game.Guesses = make([]rune, len(game.WordToGuess))
-	for i := range game.Guesses {
-		game.Guesses[i] = '_'
-	}
-	game.Attempts = 9
-	game.GameOver = false
-	game.ImagePendu = "/static/images/pendu0.png"
-	game.Message = ""
-
-	http.Redirect(w, r, "/game", http.StatusFound)
-}
-
-// Handler pour afficher le jeu
 func gameHandler(w http.ResponseWriter, r *http.Request) {
-	data := game
-	data.ImagePendu = fmt.Sprintf("/static/images/pendu%d.png", 9-game.Attempts)
-	templates.ExecuteTemplate(w, "game.html", data)
-}
-
-// Handler pour gérer les entrées du joueur
-func guessHandler(w http.ResponseWriter, r *http.Request) {
-	if game.GameOver {
-		http.Redirect(w, r, "/", http.StatusFound)
-		return
-	}
-
-	r.ParseForm()
-	letter := strings.ToUpper(r.FormValue("letter"))
-	if len(letter) != 1 {
-		http.Redirect(w, r, "/game", http.StatusFound)
-		return
-	}
-
-	correctGuess := false
-	for i, char := range game.WordToGuess {
-		if rune(letter[0]) == char {
-			game.Guesses[i] = char
-			correctGuess = true
+	if r.Method == http.MethodPost {
+		guess := r.FormValue("letter")
+		if len(guess) != 1 || strings.Contains(gameState.Guesses, guess) {
+			gameState.Message = "Lettre invalide ou déjà utilisée."
+		} else {
+			gameState.Guesses += guess
+			if strings.Contains(gameState.Word, guess) {
+				gameState.MaskedWord = updateMaskedWord(gameState.Word, gameState.Guesses)
+			} else {
+				gameState.AttemptsLeft--
+			}
+		}
+		gameState.Image = "static/image/pendu" + string('0'+rune(9-gameState.AttemptsLeft)) + ".png"
+		if gameState.AttemptsLeft == 0 {
+			gameState.Message = "Désolé, vous avez perdu ! Le mot était : " + gameState.Word
+		} else if !strings.Contains(gameState.MaskedWord, "_") {
+			gameState.Message = "Félicitations, vous avez gagné ! 🎉"
 		}
 	}
-
-	if !correctGuess {
-		game.Attempts--
+	templates.ExecuteTemplate(w, "game.html", gameState)
+}
+func randomWord(category string) string {
+	wordsInCategory := words[category]
+	return wordsInCategory[0] 
+}
+func maskWord(word string) string {
+	return strings.Repeat("_ ", len(word))
+}
+func updateMaskedWord(word, guesses string) string {
+	masked := ""
+	for _, letter := range word {
+		if strings.ContainsRune(guesses, letter) {
+			masked += string(letter) + " "
+		} else {
+			masked += "_ "
+		}
 	}
-
-	// Vérifier les conditions de fin
-	if strings.Index(string(game.Guesses), "_") == -1 {
-		game.GameOver = true
-		game.Message = "Félicitations, vous avez gagné ! 🎉"
-	} else if game.Attempts <= 0 {
-		game.GameOver = true
-		game.Message = "Désolé, vous avez perdu ! 😢"
-		game.WordRevealed = game.WordToGuess
-	}
-
-	http.Redirect(w, r, "/game", http.StatusFound)
+	return masked
 }
