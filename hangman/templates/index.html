@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu du Pendu</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 400px;
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: scale(1.02);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .hangman-illustration {
+            font-size: 80px;
+            color: #3498db;
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .difficulty-select {
+            margin-top: 20px;
+        }
+        .difficulty-select select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #bdc3c7;
+        }
+    </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu du Pendu</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="hangman-illustration">🎲</div>
+        <h1>Jeu du Pendu</h1>
+        <form method="post" action="/">
+            <div class="difficulty-select">
+                <label for="category">Choisissez la difficulté :</label>
+                <select name="category" id="category" required>
+                    <option value="">-- Sélectionnez --</option>
+                    <option value="facile">Facile</option>
+                    <option value="difficile">Difficile</option>
+                    <option value="pays">Pays</option>
+                    <option value="marque">Marque</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="btn">Commencer</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
