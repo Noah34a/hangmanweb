@@ -110,20 +110,16 @@
         </div>
 
         <div class="masked-word">
-            {{.MaskedWord}}
         </div>
 
-        <p class="attempts">Tentatives restantes : {{.AttemptsLeft}}</p>
+        <p class="attempts">Tentatives restantes :</p>
 
         <form action="/game?category={{.Category}}" method="post">
             <input type="text" name="letter" maxlength="1" placeholder="Lettre" required>
             <button type="submit">Deviner</button>
         </form>
-
-        {{if .Message}}
-            <p class="message {{if eq .AttemptsLeft 0}}lose{{end}}">{{.Message}}</p>
+            <p class="message {{if eq .AttemptsLeft 0}}lose{{end}}"></p>
             <a href="/" class="back-menu">Retour au menu principal</a>
-        {{end}}
     </div>
 </body>
 </html>
